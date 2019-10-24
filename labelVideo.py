@@ -1,22 +1,48 @@
 import time
 import pandas as pd
+import csv
 
 # %% Inputs
-input_var = "not_x"
-df = pd.DataFrame(columns=['Label','Time'])
-while input_var!= "x":
-    input_var = input("Kermit (f/b = front/back, d/g = left/right, t = talking)? ")
-    print(input_var)
+filename = input('filename: ')
 
-    if input_var == "s":
-        start = time.time()
-    elif input_var == "e":
-        end = time.time()
-    elif input_var == "f":
-        delta = time.time()-start
-        df=df.append(pd.DataFrame({'Label': [input_var], 'Time': [delta]}),ignore_index=True)
+input_var = "not_x"
+# df = pd.DataFrame(columns=['Label','Time'])
+
+with open(filename, 'w', newline='') as file:
+    writer = csv.writer(file, delimiter = ",")
+
+    while input_var!= "x":
+        input_var = input("Kermit (f = kermit, t = talking, g = no kermit)? ")
+        print(input_var)
+
+        if input_var == "s":
+            start = time.time()
+            writer.writerow(('s',0))
+
+        elif input_var == "e":
+            delta = time.time()-start
+            writer.writerow(('e',delta))
+
+        elif input_var == "f":
+            delta = time.time()-start
+
+            writer.writerow(('k',delta))
+
+            # df=df.append(pd.DataFrame({'Label': [input_var], 'Time': [delta]}),ignore_index=True)
+
+        elif input_var == "t":
+            delta = time.time()-start
+
+            writer.writerow(('kt',delta))
+
+        elif input_var == "g":
+            delta = time.time()-start
+
+            writer.writerow(('nok',delta))
+
+
      
 
-print(df)
+
 
 
