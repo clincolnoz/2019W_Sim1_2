@@ -93,3 +93,8 @@ venv/
 
 # Craig
 /SIM12*
+
+# custom data
+*.jpg
+*.mp4
+*.avi
