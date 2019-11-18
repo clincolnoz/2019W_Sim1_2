@@ -2,8 +2,16 @@
 import click
 import logging
 import tkinter as tk
+import shutil
 from PIL import ImageTk, Image
 from pathlib import Path
+from os import listdir
+from tkinter import messagebox
+
+
+# GLOBALS
+# image counter
+IMG_i = 0
 
 
 @click.command()
@@ -14,26 +22,50 @@ def main(input_filepath, output_filepath):
         cleaned data ready to be analyzed (saved in ../processed).
     """
     logger = logging.getLogger(__name__)
-    # logger.info('Making final data set from raw data')
 
+    # tkinter base
     root = tk.Tk()
-    # Code to add widgets will go here...
+
     # frame
     frame = tk.Frame(root)
     frame.pack()
-    # buttons
-    # f = kermit, t = talking, g = no kermit
-    # TODO(Discuss about Kermit talking with Craig)
-    kermit_btn = tk.Button(frame, text='kermit')
+
+    # get all frames in interim
+    frames = listdir(str(input_filepath))
+
+    # load first image
+    img = ImageTk.PhotoImage(Image.open(input_filepath + frames[0]))
+    panel = tk.Label(root, image=img)
+    panel.pack(side="bottom", fill="both", expand="yes")
+
+    def show_next_img(i: int):
+        if i == len(frames):
+            messagebox.showinfo("Information", "You're done labeling your input folder!")
+            root.destroy()
+        new_img = ImageTk.PhotoImage(Image.open(input_filepath + frames[i]))
+        panel.configure(image=new_img)
+        panel.image = new_img
+        global IMG_i
+        IMG_i += 1
+
+    # buttons and callbacks
+    def kermit_callback(i: int):
+        shutil.copy(input_filepath + frames[i],
+                    output_filepath + "kermit/" + frames[i])
+        i += 1
+        show_next_img(i)
+
+    def no_kermit_callback(i: int):
+        shutil.copy(input_filepath + frames[i],
+                    output_filepath + "no_kermit/" + frames[i])
+        i += 1
+        show_next_img(i)
+
+    kermit_btn = tk.Button(frame, text='kermit', command=lambda: kermit_callback(IMG_i))
     kermit_btn.pack(side="right")
-    no_kermit_btn = tk.Button(frame, text='no kermit')
+    no_kermit_btn = tk.Button(frame, text='no kermit', command=lambda: no_kermit_callback(IMG_i))
     no_kermit_btn.pack(side="right")
-    # image
-    canvas = tk.Canvas(root, width=700, height=450)
-    canvas.pack()
-    # TODO(Implent to iterate over all images)
-    img = ImageTk.PhotoImage(Image.open(str(input_filepath) + "frame1.jpg"))
-    canvas.create_image(20, 20, anchor="nw", image=img)
+
     # start
     root.mainloop()
 
