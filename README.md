@@ -25,9 +25,3 @@ To classify images from the extracted ones:
 ```python
 python data/classify_dataset.py "../data/interim/" "../data/processed/"
 ```
-
-## Research
-
-### Similar/Interesting Projects
-
-* https://github.com/ilirosmanaj/detect_kermit
