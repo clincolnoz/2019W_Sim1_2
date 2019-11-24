@@ -8,6 +8,8 @@ This repository contains code for dececting Kermit the frog from `The Muppets TV
 
 Have `ffmpeg` installed.
 
+Have `imaegai` installed. [Further information.](https://imageai.readthedocs.io/en/latest/#installing-imageai)
+
 ## Getting started
 
 Install the needed packaged via pip, by running:
@@ -50,7 +52,7 @@ Output:
 │			└── no_kermit
 ```
 
-### Training the model
+## Training the model
 
 Since ImageAI library was used, we have trained the CustomImagePrediction model (which uses Resnets as 
 network model type).
@@ -58,11 +60,31 @@ network model type).
 To train the model, run the following:
 
 ```bash
-python imageai_build_model.py
+python models/uild_model.py
 ```
 
 This may take different running times, depending on the number of training images, epochs, batch sizes etc.
 
-            
 After model is trained, the corresponding trained model is stored in `h5` format under 
  the `data/images/models/model_name.h5`
+
+## Troubleshooting
+
+### Path errors
+
+All paths are relative **Windows** paths. Adjust according to your OS.
+
+### Tried to convert 'y' to a tensor and failed. Error: None values not supported.
+
+I had to change one of the imports of the `ModelTraining` in the `init.py` file. [Reference](https://github.com/tensorflow/tensorflow/issues/32646)
+
+Replace:
+
+```python
+from tensorflow.python.keras.optimizers import Adam
+```
+With:
+
+```python
+from tensorflow.keras.optimizers import Adam
+```
