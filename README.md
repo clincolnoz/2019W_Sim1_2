@@ -38,16 +38,16 @@ Output:
 
 ```bash
 ├── data
-│   └── images
-│   	├── train
-│   	│	├── kermit
+│	└── images
+│		├── train
+│		│	├── kermit
 │		│	└── no_kermit
 │		├── val
-│   	│	├── kermit
+│		│	├── kermit
 │		│	└── no_kermit
-│   	└── test
-│   		├── kermit
-│  			└── no_kermit
+│		└── test
+│			├── kermit
+│			└── no_kermit
 ```
 
 ### Training the model
