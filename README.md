@@ -58,7 +58,7 @@ network model type).
 To train the model, run the following:
 
 ```bash
-python models/uild_model.py
+python models/build_model.py
 ```
 
 This may take different running times, depending on the number of training images, epochs, batch sizes etc.
@@ -86,3 +86,7 @@ With:
 ```python
 from tensorflow.keras.optimizers import Adam
 ```
+
+### KeyError: `val_acc`
+
+Replace `val_acc` with `val_accuracy` in the `__init__.py` file of `imageai/Prediction/Custom`
