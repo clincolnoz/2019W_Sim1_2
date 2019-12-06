@@ -44,12 +44,10 @@ Output:
 │		├── train
 │		│	├── kermit
 │		│	└── no_kermit
-│		├── val
-│		│	├── kermit
-│		│	└── no_kermit
 │		└── test
 │			├── kermit
 │			└── no_kermit
+
 ```
 
 ## Training the model
