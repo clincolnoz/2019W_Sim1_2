@@ -65,6 +65,39 @@ This may take different running times, depending on the number of training image
 
 After model is trained, the corresponding trained model is stored in `h5` format under 
  the `data/images/models/model_name.h5`
+ 
+## Running predictions on the model
+
+After having the model trained, you can run predictions on it using two different input formats
+(either a video or image).
+
+To run predictions on an image, run the following:
+
+```bash
+python evaluate_model.py -t [one of "image" or "video"] -f [file path to image - comma 
+separated string supported as well, or path to video]
+```
+
+E.g. Predicting an image:
+
+```bash
+python evaluate_model.py -t image -f kermit.jpeg
+
+Predicting the kermit.jpeg image
+ kermit: 99.87 no-kermit: 0.13
+
+```
+...which is awesome.
+
+Same can be done for a video:
+
+```bash
+python evaluate_model.py -t video -f MuppetsEpisode3.avi
+```
+
+This will get all the frames in 1 second interval from the video, store them under `tmp` (for now 
+named as episode3_results) folder as jpegs with a banner on top of the image that shows the prediction result 
+for each frame. 
 
 ## Troubleshooting
 
