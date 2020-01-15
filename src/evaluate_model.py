@@ -70,7 +70,7 @@ async def predict_video(video_path: str, model: CustomImagePrediction):
             break
 
         # store the image and use that one for predicting
-        image_name = "episode3_results/ep3_frame{}.jpg".format(counter)
+        image_name = (PROJECT_DIR / "tmp/ep_frame{}.jpg".format(counter)).as_posix()
         cv2.imwrite(image_name, frame)
 
         tasks[image_name] = asyncio.ensure_future(predict_image(image_name, model))

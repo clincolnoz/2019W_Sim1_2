@@ -81,10 +81,9 @@ separated string supported as well, or path to video]
 E.g. Predicting an image:
 
 ```bash
-python evaluate_model.py -t image -f kermit.jpeg
+python evaluate_model.py -t image -f kermit.jpg
 
-Predicting the kermit.jpeg image
- kermit: 99.87 no-kermit: 0.13
+2020-01-15 19:51:42,676 - __main__ - INFO - {'no_kermit': '87.29%', 'kermit': '12.71%'}
 
 ```
 ...which is awesome.
@@ -92,7 +91,7 @@ Predicting the kermit.jpeg image
 Same can be done for a video:
 
 ```bash
-python evaluate_model.py -t video -f MuppetsEpisode3.avi
+python evaluate_model.py -t video -f test.mp4
 ```
 
 This will get all the frames in 1 second interval from the video, store them under `tmp` (for now 

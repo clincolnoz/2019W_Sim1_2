@@ -99,3 +99,6 @@ venv/
 *.mp4
 *.avi
 *.png
+
+# video predict outfit
+/temp/*.jpg
