@@ -9,3 +9,5 @@
 | 08/11/2019 	| 10:00-11:00     	| Sync Meeting.                                                      	| Craig & Gent       	|
 | 17/11/2019 	| 14:00-18:00     	| Look into Librosa and audio features.                              	| Craig              	|
 | 18/11/2019 	| 14:00-17:00     	| Finished labeling GUI application.                                 	| Gent               	|
+| 24/11/2019	| 12:00-17:00		| First look at implementing the ImageAI Neural Network.				| Gent					|
+| 06/12/2019    | 12:00-15:00       | Fixed the model.                                                      | Gent                  |
