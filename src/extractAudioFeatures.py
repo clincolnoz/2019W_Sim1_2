@@ -123,7 +123,7 @@ def plot_mfcc_c(mfcc_delta,c,outfilename):
 # %%
 filename = os.path.join(root_dir,'data/raw/Muppets-02-01-01.avi')
 outfilename = os.path.join(root_dir,'data/raw/Muppets-02-01-01')
-# y, sr = load_tracks(filename, sr=22050, mono=True, duration=None)
+y, sr = load_tracks(filename, sr=22050, mono=True, duration=None)
 print(librosa.get_duration(y=y, sr=sr)/60)
 mfcc_delta=get_mfcc(y, sr)
 c=get_chroma_stft(y,sr)
