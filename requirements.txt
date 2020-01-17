@@ -6,3 +6,7 @@ tensorflow==2.0.0
 keras==2.3.1
 imageai== 2.1.5
 python-dotenv
+tensorflow_hub==0.7.0
+pyyaml==5.3
+av==6.2.0
+ffmpeg==4.1.3

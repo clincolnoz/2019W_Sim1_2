@@ -95,7 +95,7 @@ venv/
 /SIM12*
 
 # custom data
-*.jpg
+# *.jpg
 *.mp4
 *.avi
 *.png

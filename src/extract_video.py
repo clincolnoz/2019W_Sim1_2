@@ -1,16 +1,14 @@
-import av
+import av # https://docs.mikeboers.com/pyav/develop/api/video.html#module-av.video.frame
 import os
 import re
 
-data_path = './data/external/'
-cache_path = './data/raw/'
+input_dir = './data/external'
+output_dir = './data/interim'
 fps = 25
 
-input_dir = './data/external'
 if not os.path.exists(input_dir):
     print('Creating ' + input_dir)
     os.mkdir(input_dir)
-output_dir = './data/internal'
 if not os.path.exists(output_dir):
     print('Creating ' + output_dir)
     os.mkdir(output_dir)
@@ -24,6 +22,8 @@ for file in video_files:
         print('Processing file: ' + video_input)
         container = av.open(video_input)
         stream = container.streams.video[0]
-        for frame_i,frame in enumerate(container.decode(stream)):
+        for frame in container.decode(stream):
             if frame.index % fps == 0:
-                frame.to_image().save(os.path.join(output_dir,file.split('.avi')[0] + ('-%04d.jpg' % (frame.index/fps))))
+                # formater = av.video.reformatter.VideoReformatter(frame, width=224, height=224, interpolation='BILINEAR')
+                frame = frame.reformat(width=224,height=224)
+                frame.to_image().save(os.path.join(output_dir,file.split('.avi')[0] + ('_%04d.jpg' % (frame.index/fps))))
