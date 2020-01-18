@@ -7,27 +7,30 @@ import tensorflow as tf
 import tensorflow_hub as hub
 from tensorflow import keras
 import numpy as np
+
 np.random.seed(1)
 
-class TFHub():
+
+class TFHub:
     """Neural Network model implementation.
     Uses tf hub pretrained feature vector models
     """
+
     def __init__(self, kwargs):
         super().__init__()
-        self.tf_url=kwargs['hub_layer_kwargs']['tf_url']
-        self.trainable=kwargs['hub_layer_kwargs']['trainable'] # default False
-        self.optional_hub_layer_kwargs=kwargs['hub_layer_kwargs']['optional']
-        self.keras_layers = kwargs['lst_tf_keras_layers']
+        self.tf_url = kwargs["hub_layer_kwargs"]["tf_url"]
+        self.trainable = kwargs["hub_layer_kwargs"]["trainable"]  # default False
+        self.optional_hub_layer_kwargs = kwargs["hub_layer_kwargs"]["optional"]
+        self.keras_layers = kwargs["lst_tf_keras_layers"]
         # self.optimizer = kwargs['optimizer']['optimizer']
         # self.loss = kwargs['optimizer']['loss']
         # self.metrics = kwargs['optimizer']['metrics']
-        self.epochs = kwargs['model.fit']['epochs']
-        self.train_generator = kwargs['train_generator']
-        self.development_generator = kwargs['development_generator']
-        self.test_generator = kwargs['test_generator']
-        self.model_path = kwargs['model_path']
-        
+        self.epochs = kwargs["model.fit"]["epochs"]
+        self.train_generator = kwargs["train_generator"]
+        self.development_generator = kwargs["development_generator"]
+        self.test_generator = kwargs["test_generator"]
+        self.model_path = kwargs["model_path"]
+
     def setup_data(self, **kwargs):
         """Setup data function
         This function can be used by child classes to prepare data or perform
@@ -48,18 +51,21 @@ class TFHub():
             **kwargs: 'output_shape': A tuple with the (possibly partial) output shape of the callable without 
                       leading batch size. Other arguments are pass into the Layer constructor.
         """
-        hub_layer = hub.KerasLayer(self.tf_url,
-                                   trainable=self.trainable,
-                                   **self.optional_hub_layer_kwargs)
-        
-        self.model=tf.keras.Sequential([hub_layer])
+        hub_layer = hub.KerasLayer(
+            self.tf_url, trainable=self.trainable, **self.optional_hub_layer_kwargs
+        )
+
+        self.model = tf.keras.Sequential([hub_layer])
         # self.model.add(self.keras_layers)
         self.model.add(tf.keras.layers.Dropout(rate=0.2))
-        self.model.add(tf.keras.layers.Dense(
-                         self.train_generator.num_classes,
-                         activation='softmax',
-                         kernel_regularizer=tf.keras.regularizers.l2(0.0001)))
-        
+        self.model.add(
+            tf.keras.layers.Dense(
+                self.train_generator.num_classes,
+                activation="softmax",
+                kernel_regularizer=tf.keras.regularizers.l2(0.0001),
+            )
+        )
+
     def prepare(self, **kwargs):
         """called before model fit on every run.
         Implementing child classes can use this method to prepare
@@ -77,21 +83,28 @@ class TFHub():
                 preprocessed data, feature columns
         """
 
-        self.model.compile(optimizer=tf.keras.optimizers.SGD(lr=0.005, momentum=0.9),
-                           loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.1),
-                           metrics=['accuracy'])
-        
-        steps_per_epoch = self.train_generator.samples // self.train_generator.batch_size
-        validation_steps = self.development_generator.samples // self.development_generator.batch_size
-        print([steps_per_epoch,validation_steps])
+        self.model.compile(
+            optimizer=tf.keras.optimizers.SGD(lr=0.005, momentum=0.9),
+            loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.1),
+            metrics=["accuracy"],
+        )
+
+        steps_per_epoch = (
+            self.train_generator.samples // self.train_generator.batch_size
+        )
+        validation_steps = (
+            self.development_generator.samples // self.development_generator.batch_size
+        )
+        print([steps_per_epoch, validation_steps])
         hist = self.model.fit(
             self.train_generator,
-            epochs=self.epochs, 
+            epochs=self.epochs,
             steps_per_epoch=steps_per_epoch,
             validation_data=self.development_generator,
-            validation_steps=validation_steps).history
+            validation_steps=validation_steps,
+        ).history
         return hist
-        
+
     def predict(self, x, **kwargs):
         """Model predict function.
         Model scoring.
@@ -122,8 +135,10 @@ class TFHub():
             name (str): name for the model to use for saving
             version (str): version of the model to use for saving
         """
-        self.model.save('{}/{}_{}.h5'.format(self.model_path, name, version),
-                        include_optimizer=False)
+        self.model.save(
+            "{}/{}_{}.h5".format(self.model_path, name, version),
+            include_optimizer=False,
+        )
 
     def load(self, name, version):
         """Loads the model.
@@ -134,5 +149,5 @@ class TFHub():
             version (str): version of the model to load
         """
         self.model = tf.keras.models.load_model(
-            '{}/{}_{}.h5'.format(
-                self.model_path, name, version), compile=False)
+            "{}/{}_{}.h5".format(self.model_path, name, version), compile=False
+        )
