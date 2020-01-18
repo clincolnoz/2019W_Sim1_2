@@ -1,8 +1,8 @@
 data_preprocessing:
-  train_data_dir: 'data/frames/'
-  test_data_dir: 'data/frames/'
+  train_data_dir: 'data/frames/train/'
+  test_data_dir: 'data/frames/train/'
   base_datagen: {rescale: !!python/float 0.00392156862745098, #or 1/255
-                 validation_split: !!python/float 0.2}
+                 validation_split: !!python/float 0.1}
   train_datagen: {rotation_range: 40,
                   horizontal_flip: True,
                   width_shift_range: 0.2,
@@ -23,7 +23,7 @@ data_preprocessing:
 hub_layer_kwargs:
   tf_url: 'https://tfhub.dev/google/tf2-preview/mobilenet_v2/feature_vector/4'
   trainable: False
-  optional: {input_shape: !!python/tuple [224,224,3]}
+  optional: {}
 
 lst_tf_keras_layers:
   Dense(

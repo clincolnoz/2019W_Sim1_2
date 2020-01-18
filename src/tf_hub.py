@@ -20,7 +20,7 @@ class TFHub:
         super().__init__()
         self.tf_url = kwargs["hub_layer_kwargs"]["tf_url"]
         self.trainable = kwargs["hub_layer_kwargs"]["trainable"]  # default False
-        self.optional_hub_layer_kwargs = {} #kwargs["hub_layer_kwargs"]["optional"]
+        self.optional_hub_layer_kwargs = kwargs["hub_layer_kwargs"]["optional"]
         self.keras_layers = kwargs["lst_tf_keras_layers"]
         # self.optimizer = kwargs['optimizer']['optimizer']
         # self.loss = kwargs['optimizer']['loss']
@@ -83,11 +83,30 @@ class TFHub:
                 preprocessed data, feature columns
         """
 
+        # self.model.compile(
+        #     optimizer=tf.keras.optimizers.SGD(lr=0.005, momentum=0.9),
+        #     loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.1),
+        #     metrics=["accuracy"],
+        # )
         self.model.compile(
-            optimizer=tf.keras.optimizers.SGD(lr=0.005, momentum=0.9),
-            loss=tf.keras.losses.CategoricalCrossentropy(label_smoothing=0.1),
-            metrics=["accuracy"],
+            optimizer=tf.keras.optimizers.Adam(),
+            loss=tf.keras.losses.BinaryCrossentropy(),
+            metrics=['accuracy',tf.keras.metrics.Precision(),tf.keras.metrics.Recall()]
         )
+
+        # class CollectBatchStats(tf.keras.callbacks.Callback):
+        #     def __init__(self):
+        #         self.batch_losses = []
+        #         self.batch_precision = []
+        #         self.batch_recall = []
+
+        #     def on_train_batch_end(self, batch, logs=None):
+        #         self.batch_losses.append(logs['loss'])
+        #         self.batch_precision.append(logs[tf.keras.metrics.Precision()])
+        #         self.batch_recall.append(logs[tf.keras.metrics.Recall()])
+        #         self.model.reset_metrics()
+        
+        # batch_stats_callback = CollectBatchStats()
 
         steps_per_epoch = (
             self.train_generator.samples // self.train_generator.batch_size
@@ -102,6 +121,7 @@ class TFHub:
             steps_per_epoch=steps_per_epoch,
             validation_data=self.development_generator,
             validation_steps=validation_steps,
+            # callbacks = [batch_stats_callback],
         ).history
         return hist
 
@@ -137,7 +157,7 @@ class TFHub:
         """
         self.model.save(
             "{}/{}_{}.h5".format(self.model_path, name, version),
-            include_optimizer=False,
+            include_optimizer=True,
         )
 
     def load(self, name, version):
@@ -149,5 +169,5 @@ class TFHub:
             version (str): version of the model to load
         """
         self.model = tf.keras.models.load_model(
-            "{}/{}_{}.h5".format(self.model_path, name, version), compile=False
+            "{}/{}_{}.h5".format(self.model_path, name, version), compile=True
         )

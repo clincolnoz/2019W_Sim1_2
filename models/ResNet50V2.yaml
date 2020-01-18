@@ -1,8 +1,8 @@
 data_preprocessing:
-  train_data_dir: 'data/frames/'
-  test_data_dir: 'data/frames/'
+  train_data_dir: 'data/frames/train/'
+  test_data_dir: 'data/frames/train/'
   base_datagen: {rescale: !!python/float 0.00392156862745098, #or 1/255
-                 validation_split: !!python/float 0.2}
+                 validation_split: !!python/float 0.1}
   train_datagen: {rotation_range: 40,
                   horizontal_flip: True,
                   width_shift_range: 0.2,
@@ -24,6 +24,7 @@ data_preprocessing:
 hub_layer_kwargs:
   tf_url: 'https://tfhub.dev/google/imagenet/resnet_v2_50/feature_vector/4'
   trainable: False
+  optional: {}
 
 lst_tf_keras_layers:
   Dense(
@@ -32,6 +33,6 @@ lst_tf_keras_layers:
   kernel_regularizer=tf.keras.regularizers.l2(0.0001))
 
 model.fit:
-  epochs: 5
+  epochs: 1
 
 model_path: './models/'

@@ -6,10 +6,11 @@ import pandas as pd
 raw_frame_path = './data/interim/'
 raw_audio_path = 'data/audio_features/'
 label_csvs_path = './data/label_csvs/'
-kermit_path = './data/frames/kermit'
-no_kermit_path = './data/frames/no_kermit'
+kermit_path = './data/frames/train/kermit'
+no_kermit_path = './data/frames/train/no_kermit'
 
 if not os.path.exists(kermit_path):
+    os.mkdir(os.path.split(kermit_path)[0])
     os.mkdir(kermit_path)
 if not os.path.exists(no_kermit_path):
     os.mkdir(no_kermit_path)

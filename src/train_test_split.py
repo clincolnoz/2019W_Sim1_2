@@ -4,8 +4,8 @@ import pandas as pd
 test_file_csv_path = './data/testdata_csvs/'
 test_file_csv_files = os.listdir(test_file_csv_path)
 
-kermit_train_path = './data/frames/kermit'
-no_kermit_train_path = './data/frames/no_kermit'
+kermit_train_path = './data/frames/train/kermit'
+no_kermit_train_path = './data/frames/train/no_kermit'
 
 kermit_test_path = './data/frames/test/kermit'
 no_kermit_test_path = './data/frames/test/no_kermit'
