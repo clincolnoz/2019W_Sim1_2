@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-'''
+"""
 Creates an audio feature set for later use in finding similar
 audio files within a ethonmusicology context.
 
@@ -16,7 +16,7 @@ that returns probabilities for each class.
 Further mfcc_delta and chroma_stft are applied and generate features for each window resulting in 13 and 12 features, respectively.
 
 Finally, all features are converted to a dataframe, which is filtered to remove sections where speech has the maximum probability
-'''
+"""
 
 __author__ = "Craig Lincoln"
 __copyright__ = "Copyright 2019"
@@ -31,19 +31,19 @@ __status__ = "Testing"
 import librosa, librosa.display
 import numpy as np
 import pandas as pd
+
 # import tensorflow as tf
 import matplotlib.pyplot as plt
 import os
 from os.path import relpath, dirname, abspath
 
-root_dir =  os.getcwd()
+root_dir = os.getcwd()
 root_dir
 
 #%% load audio track
-def load_tracks(filename, sr=22050, mono=True, duration=None,offset=0):
+def load_tracks(filename, sr=22050, mono=True, duration=None, offset=0):
     y, sr = librosa.load(filename, sr=22050, mono=True, duration=duration)
     y = y / max(abs(y)) * 0.9
-
 
     return y, sr
 
@@ -61,27 +61,25 @@ def get_mfcc(y, sr):
 
     # mfcc_delta = mfcc_delta[:,:output_rows].T
 
-
-
     return mfcc_delta
 
+
 #%% Get Chroma
-def get_chroma_stft(y,sr):
-    c=librosa.feature.chroma_stft(y,sr,hop_length=sr)
+def get_chroma_stft(y, sr):
+    c = librosa.feature.chroma_stft(y, sr, hop_length=sr)
 
     # c = c[:,:output_rows].T
-
 
     return c
 
 
 def calc_features(file_path):
     y, sr = load_tracks(file_path, sr=22050, mono=True, duration=None)
-    mfcc_delta=get_mfcc(y, sr)
-    c=get_chroma_stft(y,sr)
+    mfcc_delta = get_mfcc(y, sr)
+    c = get_chroma_stft(y, sr)
 
     # Create a DataFrame
-    df=pd.DataFrame(np.concatenate((mfcc_delta,c),axis=0)).T
+    df = pd.DataFrame(np.concatenate((mfcc_delta, c), axis=0)).T
 
     # # add filename and chunk number as key
     # df['filename']=filename
@@ -98,23 +96,25 @@ def calc_features(file_path):
     return df
 
 
-
 #%% Plot MFCCS
-def plot_mfcc_c(mfcc_delta,c,outfilename):
-    
-    plt.figure(figsize=(10, 4))
-    librosa.display.specshow(mfcc_delta, x_axis='time', y_axis='mel', sr=22050, hop_length=sr)
-    plt.colorbar()
-    plt.title('MFCC Delta')
-    plt.tight_layout()
-    plt.savefig(outfilename + '_MFCC')
+def plot_mfcc_c(mfcc_delta, c, outfilename):
 
     plt.figure(figsize=(10, 4))
-    librosa.display.specshow(c, x_axis='time', y_axis='chroma', sr=22050, hop_length=sr)
+    librosa.display.specshow(
+        mfcc_delta, x_axis="time", y_axis="mel", sr=22050, hop_length=sr
+    )
     plt.colorbar()
-    plt.title('Chroma')
+    plt.title("MFCC Delta")
     plt.tight_layout()
-    plt.savefig(outfilename + '_Chroma')
+    plt.savefig(outfilename + "_MFCC")
+
+    plt.figure(figsize=(10, 4))
+    librosa.display.specshow(c, x_axis="time", y_axis="chroma", sr=22050, hop_length=sr)
+    plt.colorbar()
+    plt.title("Chroma")
+    plt.tight_layout()
+    plt.savefig(outfilename + "_Chroma")
+
 
 # %%
 # filename = os.path.join(root_dir,'data/external/Muppets-02-01-01.avi')
@@ -127,6 +127,6 @@ def plot_mfcc_c(mfcc_delta,c,outfilename):
 # plot_mfcc_c(mfcc_delta,c,outfilename)
 
 # %%
-file_path = os.path.join(root_dir,'data/external/Muppets-02-01-01.avi')
+file_path = os.path.join(root_dir, "data/external/Muppets-02-01-01.avi")
 df = calc_features(file_path)
 print(df)
