@@ -3,18 +3,11 @@ import time
 import os
 import pandas as pd
 
-<<<<<<< HEAD
 raw_frame_path = './data/interim/'
 raw_audio_path = 'data/audio_features/'
 label_csvs_path = './data/label_csvs/'
 kermit_path = './data/frames/kermit'
 no_kermit_path = './data/frames/no_kermit'
-=======
-raw_frame_path = "./data/interim/"
-label_csvs_path = "./data/label_csvs/"
-kermit_path = "./data/frames/kermit"
-no_kermit_path = "./data/frames/no_kermit"
->>>>>>> 4e08d79613b6d8e1ceae61522411449f5849cdf3
 
 if not os.path.exists(kermit_path):
     os.mkdir(kermit_path)

@@ -11,3 +11,7 @@
 | 18/11/2019 	| 14:00-17:00     	| Finished labeling GUI application.                                 	| Gent               	|
 | 24/11/2019	| 12:00-17:00		| First look at implementing the ImageAI Neural Network.				| Gent					|
 | 06/12/2019    | 12:00-15:00       | Fixed the model.                                                      | Gent                  |
+| 16/01/2020    | 08:00-22:00       | Developed image extraction/labelling and implemented tensorflow hub   | Craig                 |
+| 17/01/2020    | 15:00-22:00       | Further developed tensorflow hub                                      | Craig                 |
+| 18/01/2020    | 15:00-16:00       | Alignment meeting                                                     | Craig & Gent          |
+| 18/01/2020    | 16:00-18:00       | Finalized audio feature extraction and labelling                      | Craig                 |

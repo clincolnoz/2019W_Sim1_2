@@ -9,9 +9,10 @@ def get_config(path_to_yaml):
     """
     if not os.path.exists(path_to_yaml):
         print("file not found")
+        return -1
     else:
         print("loading yaml from " + path_to_yaml)
         with open(path_to_yaml, "r") as yaml_file:
             d = yaml.load(yaml_file, Loader=yaml.FullLoader)
             print(d)
-    return d
+        return d

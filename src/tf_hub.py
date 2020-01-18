@@ -20,7 +20,7 @@ class TFHub:
         super().__init__()
         self.tf_url = kwargs["hub_layer_kwargs"]["tf_url"]
         self.trainable = kwargs["hub_layer_kwargs"]["trainable"]  # default False
-        self.optional_hub_layer_kwargs = kwargs["hub_layer_kwargs"]["optional"]
+        self.optional_hub_layer_kwargs = {} #kwargs["hub_layer_kwargs"]["optional"]
         self.keras_layers = kwargs["lst_tf_keras_layers"]
         # self.optimizer = kwargs['optimizer']['optimizer']
         # self.loss = kwargs['optimizer']['loss']
@@ -57,14 +57,14 @@ class TFHub:
 
         self.model = tf.keras.Sequential([hub_layer])
         # self.model.add(self.keras_layers)
-        self.model.add(tf.keras.layers.Dropout(rate=0.2))
+        # self.model.add(tf.keras.layers.Dropout(rate=0.2))
         self.model.add(
             tf.keras.layers.Dense(
                 self.train_generator.num_classes,
                 activation="softmax",
-                kernel_regularizer=tf.keras.regularizers.l2(0.0001),
             )
         )
+        self.model.build([None, 224, 224, 3])  # Batch input shape.
 
     def prepare(self, **kwargs):
         """called before model fit on every run.

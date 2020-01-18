@@ -8,12 +8,13 @@ print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices("
 from get_config import get_config
 from tf_hub import TFHub
 
-config_path = os.path.join(os.getcwd(), "models/MobileNetV2.yaml")
+# config_path = os.path.join(os.getcwd(), "models/MobileNetV2.yaml")
+config_path = os.path.join(os.getcwd(), "models/ResNet50V2.yaml")
 config = get_config(config_path)
 
 train_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
     **config["data_preprocessing"]["base_datagen"],
-    **config["data_preprocessing"]["train_datagen"],
+    # **config["data_preprocessing"]["train_datagen"],
 )
 
 development_datagen = tf.keras.preprocessing.image.ImageDataGenerator(
