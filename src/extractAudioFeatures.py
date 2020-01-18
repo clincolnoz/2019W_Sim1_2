@@ -82,6 +82,9 @@ def calc_features(file_path):
 
     # Create a DataFrame
     df=pd.DataFrame(np.concatenate((mfcc_delta,c),axis=0)).T
+    df.reset_index(inplace=True)
+    df['index'] = df['index']+1
+    df['file'] = os.path.split(file_path)[1].split('.avi')[0]
 
     # # add filename and chunk number as key
     # df['filename']=filename
@@ -127,6 +130,12 @@ def plot_mfcc_c(mfcc_delta,c,outfilename):
 # plot_mfcc_c(mfcc_delta,c,outfilename)
 
 # %%
-file_path = os.path.join(root_dir,'data/external/Muppets-02-01-01.avi')
-df = calc_features(file_path)
-print(df)
+# files = ['data/external/Muppets-02-01-01.avi','data/external/Muppets-02-04-04.avi','data/external/Muppets-03-04-03.avi']
+def save_audio_featureto_csv(files):
+    dfs = []
+    for file in files:
+        file_path = os.path.join(root_dir,file)
+        dfs.append(calc_features(file_path))
+    df = pd.concat(dfs)
+    df.to_csv(os.path.join(root_dir,'data/audio_features/audio_features.csv'),index=False)
+    

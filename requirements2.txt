@@ -11,6 +11,5 @@ tensorflow_hub==0.7.0
 pyyaml==5.3
 Pillow==7.0.0
 ffmpeg==1.4
-av==6.2.0
 librosa==0.7.2
 matplotlib==3.1.2

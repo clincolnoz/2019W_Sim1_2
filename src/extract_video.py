@@ -23,7 +23,7 @@ for file in video_files:
         container = av.open(video_input)
         stream = container.streams.video[0]
         for frame in container.decode(stream):
-            if (frame.index % fps == 0) | (frame.index==0):
+            if (frame.index % fps == 0) and not (frame.index==0):
                 # formater = av.video.reformatter.VideoReformatter(frame, width=224, height=224, interpolation='BILINEAR')
                 frame = frame.reformat(width=224,height=224)
-                frame.to_image().save(os.path.join(output_dir,file.split('.avi')[0] + ('_%04d.jpg' % ((frame.index/fps)-1))))
+                frame.to_image().save(os.path.join(output_dir,file.split('.avi')[0] + ('_%04d.jpg' % (frame.index/fps))))
