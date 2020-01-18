@@ -75,29 +75,25 @@ def get_chroma_stft(y,sr):
     return c
 
 
-def calc_features(root_dir,collection_dir,filename):
-    y, sr = load_tracks(root_dir / collection_dir / filename, sr=22050, mono=True, duration=None)
-    probs=calc_label_probabilities(y,sr,root_dir / 'Exercise3/trained-model')
-    mfcc_delta=get_mfcc(y, sr,output_rows=probs.shape[0])
-    c=get_croma_stft(y,sr,output_rows=probs.shape[0])
+def calc_features(file_path):
+    y, sr = load_tracks(file_path, sr=22050, mono=True, duration=None)
+    mfcc_delta=get_mfcc(y, sr)
+    c=get_chroma_stft(y,sr)
 
     # Create a DataFrame
-    df=pd.DataFrame(np.concatenate((probs,mfcc_delta,c),axis=1))
+    df=pd.DataFrame(np.concatenate((mfcc_delta,c),axis=0)).T
 
-    # select on chunkn without speach
-    df.loc[df[[0,1,2,3]].idxmax(axis=1)!=3]
+    # # add filename and chunk number as key
+    # df['filename']=filename
 
-    # add filename and chunk number as key
-    df['filename']=filename
+    # df['seq'] = 1
+    # df['seq'] = df['seq'].cumsum()
 
-    df['seq'] = 1
-    df['seq'] = df['seq'].cumsum()
+    # df['key']=df['filename'] + ';' + df['seq'].astype(str)
 
-    df['key']=df['filename'] + ';' + df['seq'].astype(str)
+    # df.drop(['filename','seq'],axis=1,inplace=True)
 
-    df.drop(['filename','seq'],axis=1,inplace=True)
-
-    df.set_index('key',inplace=True)
+    # df.set_index('key',inplace=True)
 
     return df
 
@@ -121,13 +117,16 @@ def plot_mfcc_c(mfcc_delta,c,outfilename):
     plt.savefig(outfilename + '_Chroma')
 
 # %%
-filename = os.path.join(root_dir,'data/raw/Muppets-02-01-01.avi')
-outfilename = os.path.join(root_dir,'data/raw/Muppets-02-01-01')
-y, sr = load_tracks(filename, sr=22050, mono=True, duration=None)
-print(librosa.get_duration(y=y, sr=sr)/60)
-mfcc_delta=get_mfcc(y, sr)
-c=get_chroma_stft(y,sr)
+# filename = os.path.join(root_dir,'data/external/Muppets-02-01-01.avi')
+# outfilename = os.path.join(root_dir,'reports/Muppets-02-01-01')
+# y, sr = load_tracks(filename, sr=22050, mono=True, duration=None)
+# print(librosa.get_duration(y=y, sr=sr)/60)
+# mfcc_delta=get_mfcc(y, sr)
+# c=get_chroma_stft(y,sr)
 
-plot_mfcc_c(mfcc_delta,c,outfilename)
+# plot_mfcc_c(mfcc_delta,c,outfilename)
 
 # %%
+file_path = os.path.join(root_dir,'data/external/Muppets-02-01-01.avi')
+df = calc_features(file_path)
+print(df)
