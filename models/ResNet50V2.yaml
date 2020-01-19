@@ -1,7 +1,12 @@
+model_name: 'ResNet50V2'
+model_path: './models/'
+model.fit:
+  epochs: 10
+
 data_preprocessing:
   train_data_dir: 'data/frames/train/'
-  test_data_dir: 'data/frames/train/'
-  base_datagen: {rescale: !!python/float 0.00392156862745098, #or 1/255
+  test_data_dir: 'data/frames/test/'
+  train_base_datagen: {rescale: !!python/float 0.00392156862745098, # aka 1./255
                  validation_split: !!python/float 0.1}
   train_datagen: {rotation_range: 40,
                   horizontal_flip: True,
@@ -10,16 +15,22 @@ data_preprocessing:
                   shear_range: 0.2,
                   zoom_range: 0.2}
   development_datagen: {}
-  test_datagen: {}
+  test_datagen: {rescale: !!python/float 0.00392156862745098,} # aka 1./255
   base_dataflow: {target_size: !!python/tuple [224,224],
-                  batch_size: 32,
                   interpolation: 'bilinear',
                   seed: 11828331}
   train_dataflow: {subset: 'training',
-                   shuffle: True}
-  development_dataflow: {subset: 'validation',
-                         shuffle: False}
-  test_dataflow: {shuffle: False}
+                   shuffle: True,
+                   batch_size: 32,
+                  }
+  development_dataflow: {
+                      subset: 'validation',
+                      shuffle: False,
+                      batch_size: 32,
+                    }
+  test_dataflow: {shuffle: False,
+                  batch_size: 1,
+                  }
 
 hub_layer_kwargs:
   tf_url: 'https://tfhub.dev/google/imagenet/resnet_v2_50/feature_vector/4'
@@ -32,7 +43,3 @@ lst_tf_keras_layers:
   activation='softmax',
   kernel_regularizer=tf.keras.regularizers.l2(0.0001))
 
-model.fit:
-  epochs: 10
-
-model_path: './models/'

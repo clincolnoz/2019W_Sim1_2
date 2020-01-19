@@ -7,6 +7,9 @@ import tensorflow as tf
 import tensorflow_hub as hub
 from tensorflow import keras
 import numpy as np
+from datetime import datetime
+import os
+
 
 np.random.seed(1)
 
@@ -28,8 +31,9 @@ class TFHub:
         self.epochs = kwargs["model.fit"]["epochs"]
         self.train_generator = kwargs["train_generator"]
         self.development_generator = kwargs["development_generator"]
-        self.test_generator = kwargs["test_generator"]
+        # self.test_generator = kwargs["test_generator"]
         self.model_path = kwargs["model_path"]
+        self.model_name = kwargs["model_name"]
 
     def setup_data(self, **kwargs):
         """Setup data function
@@ -55,7 +59,8 @@ class TFHub:
             self.tf_url, trainable=self.trainable, **self.optional_hub_layer_kwargs
         )
 
-        self.model = tf.keras.Sequential([hub_layer])
+        self.model = tf.keras.Sequential([tf.keras.Input(shape=[224, 224, 3]),
+                                        hub_layer])
         # self.model.add(self.keras_layers)
         # self.model.add(tf.keras.layers.Dropout(rate=0.2))
         self.model.add(
@@ -64,7 +69,7 @@ class TFHub:
                 activation="softmax",
             )
         )
-        self.model.build([None, 224, 224, 3])  # Batch input shape.
+        # self.model.build([None, 224, 224, 3])  # Batch input shape.
 
     def prepare(self, **kwargs):
         """called before model fit on every run.
@@ -102,22 +107,47 @@ class TFHub:
 
         #     def on_train_batch_end(self, batch, logs=None):
         #         self.batch_losses.append(logs['loss'])
-        #         self.batch_precision.append(logs[tf.keras.metrics.Precision()])
-        #         self.batch_recall.append(logs[tf.keras.metrics.Recall()])
+        #         self.batch_precision.append(logs[tf.keras.metrics.Precision().result()])
+        #         self.batch_recall.append(logs[tf.keras.metrics.Recall().result()])
         #         self.model.reset_metrics()
         
         # batch_stats_callback = CollectBatchStats()
 
+        # logdir = "logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
+        # if not os.path.exists(logdir):
+        #     parent = os.path.split(logdir)[0]
+        #     if not os.path.exists(parent):
+        #         parent2 = os.path.split(parent)[0]
+        #         if not os.path.exists(parent2):
+        #             os.mkdir(parent2)
+        #         os.mkdir(parent)
+        #     os.mkdir(logdir)
+        # tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
+        
+        path='{}{}/bestmodel'.format(self.model_path,self.model_name)
+        if not os.path.exists(path):
+            parent = os.path.split(path)[0]
+            if not os.path.exists(parent):
+                parent2 = os.path.split(parent)[0]
+                if not os.path.exists(parent2):
+                    os.mkdir(parent2)
+                os.mkdir(parent)
+            os.mkdir(path)
+        
+        path = path + '/' + self.model_name 
+        
         callbacks = [
             keras.callbacks.ModelCheckpoint(
-                filepath='./models/mymodel_{epoch}.h5',
+                filepath=path + '_{epoch}.h5',
                 # Path where to save the model
                 # The two parameters below mean that we will overwrite
                 # the current checkpoint if and only if
                 # the `val_loss` score has improved.
-                save_best_only=False,
+                save_best_only=True,
                 monitor='val_loss',
-                verbose=1)
+                verbose=1),
+            # batch_stats_callback
+            # tensorboard_callback,
         ]   
 
         steps_per_epoch = (
@@ -137,7 +167,7 @@ class TFHub:
         ).history
         return hist
 
-    def predict(self, x, **kwargs):
+    def predict(self, x, steps, **kwargs):
         """Model predict function.
         Model scoring.
         This method is final. Signature will be checked at runtime!
@@ -146,9 +176,9 @@ class TFHub:
         Returns:
             yhat: numerical matrix containing the predicted responses.
         """
-        return self.model.predict(x)
+        return self.model.predict(x,steps=steps)
 
-    def evaluate(self, **kwargs):
+    def evaluate(self, xy_gen, steps, **kwargs):
         """Model predict and evluate.
         This method is final. Signature will be checked at runtime!
         Args:
@@ -156,7 +186,8 @@ class TFHub:
         Returns:
             metrics: to be defined!
         """
-        evaluation = self.model.evaluate()
+        
+        evaluation = self.model.evaluate(xy_gen,steps=steps)
         return evaluation
 
     def save(self, name, version):
@@ -168,11 +199,11 @@ class TFHub:
             version (str): version of the model to use for saving
         """
         self.model.save(
-            "{}/{}_{}.h5".format(self.model_path, name, version),
+            filepath,
             include_optimizer=True,
         )
 
-    def load(self, name, version):
+    def load(self, filepath):
         """Loads the model.
         Load the model from local storage.
         This method is final. Signature will be checked at runtime!
@@ -181,5 +212,8 @@ class TFHub:
             version (str): version of the model to load
         """
         self.model = tf.keras.models.load_model(
-            "{}/{}_{}.h5".format(self.model_path, name, version), compile=True
+            filepath, 
+            compile=True,
+            custom_objects={'KerasLayer':hub.KerasLayer},
         )
+        # self.model.build([None, 224, 224, 3])  # Batch input shape.

@@ -14,5 +14,5 @@ def get_config(path_to_yaml):
         print("loading yaml from " + path_to_yaml)
         with open(path_to_yaml, "r") as yaml_file:
             d = yaml.load(yaml_file, Loader=yaml.FullLoader)
-            print(d)
+            # print(d)
         return d
