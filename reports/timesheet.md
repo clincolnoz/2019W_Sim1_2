@@ -16,3 +16,4 @@
 | 18/01/2020    | 15:00-16:00       | Alignment meeting                                                     | Craig & Gent          |
 | 18/01/2020    | 16:00-18:00       | Finalized audio feature extraction and labelling                      | Craig                 |
 | 18/01/2020    | 20:30-22:30       | Created test set by hand and made sure audio and video were consistent| Craig                 |
+| 18/01/2020    | 22:30-23:30       | train model                                                           | Craig                 |

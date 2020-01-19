@@ -2,6 +2,7 @@
 
 import os
 import tensorflow as tf
+import json
 
 print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices("GPU")))
 
@@ -56,7 +57,13 @@ del tf_hub_kwargs["data_preprocessing"]
 im_cls = TFHub(tf_hub_kwargs)
 im_cls.setup_model()
 hist=im_cls.fit()
-im_cls.save(name=config_file.split('.')[0], version="0.1")
+im_cls.save(name=config_file.split('.')[0], version="0.2")
+
+print(hist)
+# Get the dictionary containing each metric and the loss for each epoch
+history_dict = hist.history
+# Save it under the form of a json file
+json.dump(history_dict, open('./models/' + config_file.split('.')[0] + 'hist.json', 'w'))
 
 # test_steps = test_generator.samples // test_generator.batch_size
 # evaluation=im_cls.evaluate(test_generator,test_steps)

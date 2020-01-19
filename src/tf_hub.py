@@ -108,6 +108,18 @@ class TFHub:
         
         # batch_stats_callback = CollectBatchStats()
 
+        callbacks = [
+            keras.callbacks.ModelCheckpoint(
+                filepath='./models/mymodel_{epoch}.h5',
+                # Path where to save the model
+                # The two parameters below mean that we will overwrite
+                # the current checkpoint if and only if
+                # the `val_loss` score has improved.
+                save_best_only=False,
+                monitor='val_loss',
+                verbose=1)
+        ]   
+
         steps_per_epoch = (
             self.train_generator.samples // self.train_generator.batch_size
         )
@@ -121,7 +133,7 @@ class TFHub:
             steps_per_epoch=steps_per_epoch,
             validation_data=self.development_generator,
             validation_steps=validation_steps,
-            # callbacks = [batch_stats_callback],
+            callbacks = callbacks,
         ).history
         return hist
 
