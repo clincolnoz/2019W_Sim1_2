@@ -1,7 +1,7 @@
 model_name: 'ResNet50V2_0.1'
 model_path: './models/'
 model.fit:
-  epochs: 10
+  epochs: 20
 
 data_preprocessing:
   train_data_dir: 'data/frames/train/'
