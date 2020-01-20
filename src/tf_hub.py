@@ -216,4 +216,7 @@ class TFHub:
             compile=True,
             custom_objects={'KerasLayer':hub.KerasLayer},
         )
+        for i,layer in enumerate(self.model.layers):
+            if layer.name == 'keras_layer':
+                self.model.layers[i].trainable=self.trainable
         # self.model.build([None, 224, 224, 3])  # Batch input shape.

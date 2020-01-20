@@ -60,7 +60,7 @@ def get_image_generator(config):
     )
     return train_generator, development_generator, test_generator
 
-def create_new_model(config, train_generator, development_generator):
+def get_model_instance(config, train_generator, development_generator):
     config["train_generator"] = train_generator
     config["development_generator"] = development_generator
     tf_hub_kwargs = config
@@ -69,15 +69,68 @@ def create_new_model(config, train_generator, development_generator):
     im_cls.setup_model()
     return im_cls, tf_hub_kwargs
 
-def make_predictions(config,best_model_path):
+def get_best_model_file(config_file):
+    # load config
+    config_path = os.path.join(*[os.getcwd(), "models",config_file])
+    config = get_config(config_path)
+
+    # get best model path
+    best_model_path = '{}{}/bestmodel'.format(config['model_path'],config['model_name'])
+    best_model_files = os.listdir(best_model_path)
+    best_model_file = os.path.join(best_model_path,best_model_files[-1])
+    print('Best model file is {}'.format(best_model_file))
+    return best_model_file
+
+def setup_model_and_train(config_file):
+    # config_file = 'ResNet50V2_0.2.yaml'
+    config_path = os.path.join(*[os.getcwd(), "models",config_file])
+    config = get_config(config_path)
+
     # get image generators
     train_generator, development_generator, test_generator = get_image_generator(config)
     # setup new instance
-    im_cls2, tf_hub_kwargs = create_new_model(config, train_generator, development_generator)
+    im_cls, tf_hub_kwargs = get_model_instance(config, train_generator, development_generator)
+
+    # First Training
+    hist=im_cls.fit()
+    hist_df = pd.DataFrame.from_dict(hist,orient='columns')
+    hist_df.to_csv('{}{}/hist_{}.csv'.format(config['model_path'],config['model_name'],config['model_name']),
+                index=False)
+    best_model_file = get_best_model_file(config_file)
+    return best_model_file
+
+def load_model_and_train(config_file,best_model_file):
+    """Continue training using augmented images""" 
+    config_path = os.path.join(*[os.getcwd(), "models",config_file])
+    config = get_config(config_path)
+
+    # get image generators
+    train_generator, development_generator, test_generator = get_image_generator(config)
+    # setup new instance
+    im_cls, tf_hub_kwargs = get_model_instance(config, train_generator, development_generator)
+
+    # First Training
+    im_cls.load(best_model_file)
+    hist=im_cls.fit()
+    hist_df = pd.DataFrame.from_dict(hist,orient='columns')
+    hist_df.to_csv('{}{}/hist_{}.csv'.format(config['model_path'],config['model_name'],config['model_name']),
+                index=False)
+    best_model_file = get_best_model_file(config_file)
+    return best_model_file
+
+def make_predictions(config_file,best_model_file):
+    config_path = os.path.join(*[os.getcwd(), "models",config_file])
+    config = get_config(config_path)
+    
+
+    # get image generators
+    train_generator, development_generator, test_generator = get_image_generator(config)
+    # setup new instance
+    im_cls2, tf_hub_kwargs = get_model_instance(config, train_generator, development_generator)
 
     # load best model
     # best_model_path = 'models/ResNet50V2_0.2/bestmodel/ResNet50V2_0.2_1.h5'
-    im_cls2.load(best_model_path)
+    im_cls2.load(best_model_file)
 
     steps = test_generator.samples // test_generator.batch_size
     # evaluation=im_cls2.evaluate(test_generator,steps)

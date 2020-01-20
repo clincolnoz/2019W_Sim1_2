@@ -39,9 +39,5 @@ hub_layer_kwargs:
   trainable: False
   optional: {}
 
-lst_tf_keras_layers:
-  Dense(
-  self.train_generator.num_classes,
-  activation='softmax',
-  kernel_regularizer=tf.keras.regularizers.l2(0.0001))
+lst_tf_keras_layers: None
 
