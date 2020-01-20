@@ -111,6 +111,7 @@ Because of this we wanted to compare how the model compares to more traditional 
 #### Confusion Matrices
 
 Audio Confusion Matrix
+
 |           | Predicted kermit | Predicted no-kermit |
 |-----------|------------------|---------------------|
 | kermit    | 20               | 60                  |
@@ -118,14 +119,14 @@ Audio Confusion Matrix
 
 
 Image Confusion Matrix
+
 |           | Predicted kermit | Predicted no-kermit |
 |-----------|------------------|---------------------|
 | kermit    | 71               | 9                   |
 | no-kermit | 102              | 154                 |
->>>>>>> Stashed changes
-
 
 Combined Confusion Matrix
+
 |           | Predicted kermit | Predicted no-kermit |
 |-----------|------------------|---------------------|
 | kermit    | 0                | 43                  |
