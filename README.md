@@ -2,13 +2,31 @@
 
 ![Kermit Wanted Header](https://vignette.wikia.nocookie.net/muppet/images/0/05/Iflorist_1.jpg)
 
-This repository contains code for dececting Kermit the frog from `The Muppets TV Show` using visual and accoustic features.
+This repository contains code for dececting Kermit the frog from 
+`The Muppets TV Show` using visual and accoustic features made as part
+of the `188.498 Similarity Modeling 2 - Computational Seeing and Hearing`
+lecture at the Technical University of Vienna.
+
+Students: Craig Lincoln () & Gent Rexha (11832486)
 
 ## Requirements
 
-Have `ffmpeg` installed.
+1. Source code [and executable binary.]
+2. Readme File with...
+    1. Complete student data
+    2. Entry point of the code (e.g. main Matlab file)
+    3. Performance indicators (e.g. Recall, Precision, etc.)
+    4. Timesheets
+    5. Infos on architecture, features, classifier, etc. - whatever you consider important/helpful
+3. If applicable - Weka Arff-File with...
+    1. Feature names
+    2. Feature data
+    3. Ground truth labels
+4. If relevant, deep learning model file
+5. Test data (no videos, but images/audio with ground truth) & Weka Experimenter log file for classifier comparison (if applicable)
+6. ROC figures of classifier performance
 
-Have `imaegai` installed. [Further information.](https://imageai.readthedocs.io/en/latest/#installing-imageai)
+## Student data
 
 ## Getting started
 
@@ -18,107 +36,42 @@ Install the needed packaged via pip, by running:
 pip install -r requirements.txt
 ```
 
-To create the images from the video:
-```python
-python data/make_dataset.py "../data/raw/YOUR_VIDEO_HERE.mp4" "../data/interim/"
-```
+## Performance indicators
 
-To classify images from the extracted ones:
-```python
-python data/classify_dataset.py "../data/interim/" "../data/processed/"
-```
+## Timesheet
 
-## Train-test splitting the data TODO(Consider dataset imbalance)
+# Time Sheet
 
-We use the split-folders pip package for train-test splitting. (Running from `/src`)
+| Date       	| Time          	| Description                                                        	| Person responsible 	|
+|------------	|-----------------	|--------------------------------------------------------------------	|--------------------	|
+| 08/10/2019 	| 09:00-12:00     	| Attended Lecture on SIM 1                                           	| Craig & Gent         	|
+| 11/10/2019 	| 09:00-12:00     	| Attended Lecture on SIM 1                                          	| Craig & Gent         	|
+| 19/10/2019 	| 16:00-19:00     	| Initialized repository and initial research.                       	| Craig              	|
+| 23/10/2019 	| 14:00-15:00     	| Watched and got Kermit times from episode 02-01-01.                	| Craig              	|
+| 04/11/2019 	| 20:00-22:00     	| Set project structure and moved some stuff around for the meeting. 	| Gent               	|
+| 07/11/2019 	| 20:00-24:00     	| Started working on some dataset preparation.                       	| Gent               	|
+| 08/11/2019 	| 10:00-11:00     	| Sync Meeting.                                                      	| Craig & Gent       	|
+| 17/11/2019 	| 14:00-18:00     	| Look into Librosa and audio features.                              	| Craig              	|
+| 18/11/2019 	| 14:00-17:00     	| Finished labeling GUI application.                                 	| Gent               	|
+| 24/11/2019	| 12:00-17:00		| First look at implementing the ImageAI Neural Network.				| Gent					|
+| 06/12/2019    | 12:00-15:00       | Fixed the model.                                                      | Gent                  |
+| 16/01/2020    | 08:00-22:00       | Developed image extraction/labelling and implemented tensorflow hub   | Craig                 |
+| 17/01/2020    | 15:00-22:00       | Further developed tensorflow hub                                      | Craig                 |
+| 18/01/2020    | 15:00-16:00       | Alignment meeting                                                     | Craig & Gent          |
+| 18/01/2020    | 16:00-18:00       | Finalized audio feature extraction and labelling                      | Craig                 |
+| 18/01/2020    | 20:30-22:30       | Created test set by hand and made sure audio and video were consistent| Craig                 |
+| 18/01/2020    | 22:30-23:30       | Train model                                                           | Craig                 |
+| 19/01/2020    | 22:30-23:30       | Train model                                                           | Craig                 |
+| 19/01/2020    | 20:00-22:00       | GPU Tensorflow environment setup                                      | Gent                  |
+| 20/01/2020    | 11:00-24:00       | Model re-training, last changes and write report.                     | Gent                  |
 
-```bash
-python data/traintest_split.py
-```
+## Infos on architecture, features, classifier, etc. - whatever you consider important/helpful
 
-Output:
+### Train-test splitting the data TODO(Consider dataset imbalance)
 
-```bash
-├── data
-│	└── images
-│		├── train
-│		│	├── kermit
-│		│	└── no_kermit
-│		└── test
-│			├── kermit
-│			└── no_kermit
+### Training the model
 
-```
+### Running predictions on the model
 
-## Training the model
 
-Since ImageAI library was used, we have trained the CustomImagePrediction model (which uses Resnets as 
-network model type).
 
-To train the model, run the following:
-
-```bash
-python models/build_model.py
-```
-
-This may take different running times, depending on the number of training images, epochs, batch sizes etc.
-
-After model is trained, the corresponding trained model is stored in `h5` format under 
- the `data/images/models/model_name.h5`
- 
-## Running predictions on the model
-
-After having the model trained, you can run predictions on it using two different input formats
-(either a video or image).
-
-To run predictions on an image, run the following:
-
-```bash
-python evaluate_model.py -t [one of "image" or "video"] -f [file path to image - comma 
-separated string supported as well, or path to video]
-```
-
-E.g. Predicting an image:
-
-```bash
-python evaluate_model.py -t image -f kermit.jpg
-
-2020-01-15 19:51:42,676 - __main__ - INFO - {'no_kermit': '87.29%', 'kermit': '12.71%'}
-
-```
-...which is awesome.
-
-Same can be done for a video:
-
-```bash
-python evaluate_model.py -t video -f test.mp4
-```
-
-This will get all the frames in 1 second interval from the video, store them under `tmp` (for now 
-named as episode3_results) folder as jpegs with a banner on top of the image that shows the prediction result 
-for each frame. 
-
-## Troubleshooting
-
-### Path errors
-
-All paths are relative **Windows** paths. Adjust according to your OS.
-
-### Tried to convert 'y' to a tensor and failed. Error: None values not supported.
-
-I had to change one of the imports of the `ModelTraining` in the `init.py` file. [Reference](https://github.com/tensorflow/tensorflow/issues/32646)
-
-Replace:
-
-```python
-from tensorflow.python.keras.optimizers import Adam
-```
-With:
-
-```python
-from tensorflow.keras.optimizers import Adam
-```
-
-### KeyError: `val_acc`
-
-Replace `val_acc` with `val_accuracy` in the `__init__.py` file of `imageai/Prediction/Custom`
