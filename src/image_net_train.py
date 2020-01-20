@@ -19,3 +19,8 @@ best_model_file = setup_model_and_train(config_file)
 # Loads teh model from above and continues traingin with augmented images
 config_file = 'ResNet50V2_0.2.yaml'
 best_model_file = load_model_and_train(config_file,best_model_file)
+
+# Creates a new instance and trainson un augmented images
+np.random.seed(2)
+config_file = 'ResNet50V2_0.1.yaml'
+best_model_file = load_model_and_train(config_file,best_model_file)
