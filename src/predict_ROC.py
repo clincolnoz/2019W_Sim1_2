@@ -19,11 +19,13 @@ import matplotlib.pyplot as plt
 
 np.random.seed(1)
 
-config_file = 'ResNet50V2_0.2.yaml'
+config_file = 'ResNet50V2_0.1.yaml'
 # config_file = 'MobileNetV2_0.2.yaml'
 
 # get best model path
 best_model_file = get_best_model_file(config_file)
+make_train_predictions(config_file, best_model_file)
+make_predictions(config_file, best_model_file)
 df = make_predictions(config_file,best_model_file)
 
 print(confusion_matrix(df['true'], df['pred']))
@@ -42,5 +44,5 @@ plt.xlabel('False Positive Rate')
 plt.ylabel('True Positive Rate')
 plt.title('Receiver operating characteristic of kermit classifier ({})'.format(config_file.split('.yaml')[0]))
 plt.legend(loc="lower right")
-plt.savefig('./reports/image_ROC.png')
+plt.savefig('./reports/image_ROC_v03.png')
 plt.show()

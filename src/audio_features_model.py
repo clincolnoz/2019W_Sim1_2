@@ -8,20 +8,25 @@ import tensorflow as tf
 from tensorflow import keras
 
 
-class AudioFeatures():
+class AudioFeatures:
     """Neural Network model implementation.
     SDK users can use this class to create and train Keras models or
     subclass this class to define custom neural networks.
     """
+
     def __init__(self):
         super().__init__()
         self.learning_rate = 0.1
         self.epochs = 50
         self.num_microbatches = 250
         self.verbose = 0
-        self.metrics = ['accuracy',tf.keras.metrics.Precision(),tf.keras.metrics.Recall()]
+        self.metrics = [
+            "accuracy",
+            tf.keras.metrics.Precision(),
+            tf.keras.metrics.Recall(),
+        ]
         self.model = None
-        
+
     def setup_data(self, **kwargs):
         """Setup data function
         This function can be used by child classes to prepare data or perform
@@ -38,13 +43,15 @@ class AudioFeatures():
         Args:
             kwargs (:obj:`dict`): dictionary of optional arguments
         """
-        self.model = keras.Sequential([
-            keras.layers.Input(kwargs['n_features']),
-            keras.layers.Dense(40, activation='relu'),
-            keras.layers.Dense(40, activation='relu'),
-            keras.layers.Dense(40, activation='relu'),
-            keras.layers.Dense(40, activation='relu'),
-            keras.layers.Dense(kwargs['n_labels'], activation='softmax')]
+        self.model = keras.Sequential(
+            [
+                keras.layers.Input(kwargs["n_features"]),
+                keras.layers.Dense(40, activation="relu"),
+                keras.layers.Dense(40, activation="relu"),
+                keras.layers.Dense(40, activation="relu"),
+                keras.layers.Dense(40, activation="relu"),
+                keras.layers.Dense(kwargs["n_labels"], activation="softmax"),
+            ]
         )
 
     def prepare(self, **kwargs):
@@ -63,18 +70,13 @@ class AudioFeatures():
             kwargs (:obj:`dict`): dictionary of optional arguments.
                 preprocessed data, feature columns
         """
-        X_train = kwargs['X_train']
-        y_train = kwargs['y_train']
+        X_train = kwargs["X_train"]
+        y_train = kwargs["y_train"]
 
-        optimizer = tf.keras.optimizers.SGD(
-            learning_rate=self.learning_rate)
+        optimizer = tf.keras.optimizers.SGD(learning_rate=self.learning_rate)
         loss = tf.keras.losses.BinaryCrossentropy()
-        self.model.compile(optimizer=optimizer,
-                           loss=loss,
-                           metrics=self.metrics)
-        hist = self.model.fit(X_train,
-                       y_train,
-                       epochs=self.epochs).history
+        self.model.compile(optimizer=optimizer, loss=loss, metrics=self.metrics)
+        hist = self.model.fit(X_train, y_train, epochs=self.epochs).history
         return hist
 
     def predict(self, **kwargs):
@@ -86,8 +88,8 @@ class AudioFeatures():
         Returns:
             yhat: numerical matrix containing the predicted responses.
         """
-        X_test = kwargs['X_test']
-        
+        X_test = kwargs["X_test"]
+
         return self.model.predict(X_test)
 
     def evaluate(self, **kwargs):
@@ -98,12 +100,12 @@ class AudioFeatures():
         Returns:
             metrics: to be defined!
         """
-        X_test = kwargs['X_test']
-        y_test = kwargs['y_test']
+        X_test = kwargs["X_test"]
+        y_test = kwargs["y_test"]
 
-        evaluation = self.model.evaluate(X_test,y_test)
+        evaluation = self.model.evaluate(X_test, y_test)
         return evaluation
-    
+
     def save(self, filepath):
         """Saves the model.
         Save the model in binary format on local storage.
@@ -112,8 +114,7 @@ class AudioFeatures():
             name (str): name for the model to use for saving
             version (str): version of the model to use for saving
         """
-        self.model.save(filepath,
-                        include_optimizer=True)
+        self.model.save(filepath, include_optimizer=True)
 
     def load(self, filepath):
         """Loads the model.
@@ -123,5 +124,4 @@ class AudioFeatures():
             name (str): name of the model to load
             version (str): version of the model to load
         """
-        self.model = tf.keras.models.load_model(
-            filepath, compile=True)
+        self.model = tf.keras.models.load_model(filepath, compile=True)

@@ -3,11 +3,11 @@ import time
 import os
 import pandas as pd
 
-raw_frame_path = './data/interim/'
-raw_audio_path = 'data/audio_features/'
-label_csvs_path = './data/label_csvs/'
-kermit_path = './data/frames/train/kermit'
-no_kermit_path = './data/frames/train/no_kermit'
+raw_frame_path = "./data/interim/"
+raw_audio_path = "data/audio_features/"
+label_csvs_path = "./data/label_csvs/"
+kermit_path = "./data/frames/train/kermit"
+no_kermit_path = "./data/frames/train/no_kermit"
 
 if not os.path.exists(kermit_path):
     os.mkdir(os.path.split(kermit_path)[0])
@@ -43,17 +43,24 @@ for image_file in image_files:
         filename, time = image_file.split("_")
         if int(time.split(".")[0]) in kermit_file_times[filename]:
             path_out = kermit_path
-            audio_label.append([int(time.split('.')[0]),filename,'kermit'])
+            audio_label.append([int(time.split(".")[0]), filename, "kermit"])
         else:
             path_out = no_kermit_path
-            audio_label.append([int(time.split('.')[0]),filename,'no_kermit'])
-        os.rename(os.path.join(raw_frame_path,image_file), os.path.join(path_out,image_file))
+            audio_label.append([int(time.split(".")[0]), filename, "no_kermit"])
+        os.rename(
+            os.path.join(raw_frame_path, image_file), os.path.join(path_out, image_file)
+        )
 
-audio_labels_df = pd.DataFrame(audio_label, columns=['index','file','label'])
+audio_labels_df = pd.DataFrame(audio_label, columns=["index", "file", "label"])
 
-audio_labels_df.to_csv(os.path.join(raw_audio_path,'audio_features_labels.csv'),index=False)
-audio_features = pd.read_csv(os.path.join(raw_audio_path,'audio_features.csv'))
-audio_features_labelled=audio_features.set_index(['index','file']).join(audio_labels_df.set_index(['index','file']))
-audio_features_labelled.dropna(axis=0,inplace=True)
-audio_features_labelled.to_csv(os.path.join(raw_audio_path,'audio_features_labelled.csv'),index=True)
-
+audio_labels_df.to_csv(
+    os.path.join(raw_audio_path, "audio_features_labels.csv"), index=False
+)
+audio_features = pd.read_csv(os.path.join(raw_audio_path, "audio_features.csv"))
+audio_features_labelled = audio_features.set_index(["index", "file"]).join(
+    audio_labels_df.set_index(["index", "file"])
+)
+audio_features_labelled.dropna(axis=0, inplace=True)
+audio_features_labelled.to_csv(
+    os.path.join(raw_audio_path, "audio_features_labelled.csv"), index=True
+)

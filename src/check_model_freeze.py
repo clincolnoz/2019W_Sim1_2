@@ -11,13 +11,11 @@ print("Num GPUs Available: ", len(tf.config.experimental.list_physical_devices("
 from tf_hub import TFHub
 from image_net_util import *
 
-filepath = './models/ResNet50V2_0.1/bestmodel\ResNet50V2_0.1_1.h5'
+filepath = "./models/ResNet50V2_0.1/bestmodel\ResNet50V2_0.1_1.h5"
 model = tf.keras.models.load_model(
-            filepath, 
-            compile=True,
-            custom_objects={'KerasLayer':hub.KerasLayer},
-        )
-model.layers[0].trainable=True
+    filepath, compile=True, custom_objects={"KerasLayer": hub.KerasLayer},
+)
+model.layers[0].trainable = True
 model_yaml = model.to_yaml()
 print(model_yaml)
 

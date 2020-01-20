@@ -27,7 +27,7 @@ __maintainer__ = "Craig Lincoln"
 __email__ = "clincolnoz@gmail.com"
 __status__ = "Testing"
 
-#%% init
+# %% init
 import librosa, librosa.display
 import numpy as np
 import pandas as pd
@@ -40,7 +40,8 @@ from os.path import relpath, dirname, abspath
 root_dir = os.getcwd()
 root_dir
 
-#%% load audio track
+
+# %% load audio track
 def load_tracks(filename, sr=22050, mono=True, duration=None, offset=0):
     y, sr = librosa.load(filename, sr=22050, mono=True, duration=duration)
     y = y / max(abs(y)) * 0.9
@@ -48,7 +49,7 @@ def load_tracks(filename, sr=22050, mono=True, duration=None, offset=0):
     return y, sr
 
 
-#%% get mfcc
+# %% get mfcc
 def get_mfcc(y, sr):
     # Set the hop length; at 22050 Hz, 512 samples ~= 23ms
     hop_length = sr
@@ -64,7 +65,7 @@ def get_mfcc(y, sr):
     return mfcc_delta
 
 
-#%% Get Chroma
+# %% Get Chroma
 def get_chroma_stft(y, sr):
     c = librosa.feature.chroma_stft(y, sr, hop_length=sr)
 
@@ -79,14 +80,10 @@ def calc_features(file_path):
     c = get_chroma_stft(y, sr)
 
     # Create a DataFrame
-<<<<<<< HEAD
-    df=pd.DataFrame(np.concatenate((mfcc_delta,c),axis=0)).T
-    df.reset_index(inplace=True)
-    df['index'] = df['index']+1
-    df['file'] = os.path.split(file_path)[1].split('.avi')[0]
-=======
     df = pd.DataFrame(np.concatenate((mfcc_delta, c), axis=0)).T
->>>>>>> 4e08d79613b6d8e1ceae61522411449f5849cdf3
+    df.reset_index(inplace=True)
+    df["index"] = df["index"] + 1
+    df["file"] = os.path.split(file_path)[1].split(".avi")[0]
 
     # # add filename and chunk number as key
     # df['filename']=filename
@@ -103,9 +100,8 @@ def calc_features(file_path):
     return df
 
 
-#%% Plot MFCCS
+# %% Plot MFCCS
 def plot_mfcc_c(mfcc_delta, c, outfilename):
-
     plt.figure(figsize=(10, 4))
     librosa.display.specshow(
         mfcc_delta, x_axis="time", y_axis="mel", sr=22050, hop_length=sr
@@ -134,12 +130,16 @@ def plot_mfcc_c(mfcc_delta, c, outfilename):
 # plot_mfcc_c(mfcc_delta,c,outfilename)
 
 # %%
-# files = ['data/external/Muppets-02-01-01.avi','data/external/Muppets-02-04-04.avi','data/external/Muppets-03-04-03.avi']
+files = ['data/external/Muppets-02-01-01.avi', 'data/external/Muppets-02-04-04.avi',
+         'data/external/Muppets-03-04-03.avi']
+
+
 def save_audio_featureto_csv(files):
     dfs = []
     for file in files:
-        file_path = os.path.join(root_dir,file)
+        file_path = os.path.join(root_dir, file)
         dfs.append(calc_features(file_path))
     df = pd.concat(dfs)
-    df.to_csv(os.path.join(root_dir,'data/audio_features/audio_features.csv'),index=False)
-    
+    df.to_csv(
+        os.path.join(root_dir, "data/audio_features/audio_features.csv"), index=False
+    )

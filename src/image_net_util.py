@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
-
 import os
 import json
 import pandas as pd
 import numpy as np
 import yaml
 import tensorflow as tf
-
+from sklearn.metrics import accuracy_score, recall_score, f1_score, precision_score
 from get_config import get_config
 from tf_hub import TFHub
 
@@ -141,6 +140,31 @@ def make_predictions(config_file,best_model_file):
     df['true'] = test_generator.labels
     df['pred'] = df['probs_kermit'].apply(lambda x: 0 if x>=0.5 else 1)
 
-    df.to_csv('data/image_predictions_labelled.csv',index=False)
+    df.to_csv('data/image_predictions_labelled_test.csv',index=False)
+    return df
+
+
+def make_train_predictions(config_file, best_model_file):
+    config_path = os.path.join(*[os.getcwd(), "models", config_file])
+    config = get_config(config_path)
+
+    # get image generators
+    train_generator, development_generator, test_generator = get_image_generator(config)
+    # setup new instance
+    im_cls2, tf_hub_kwargs = get_model_instance(config, train_generator, development_generator)
+
+    # load best model
+    # best_model_path = 'models/ResNet50V2_0.2/bestmodel/ResNet50V2_0.2_1.h5'
+    im_cls2.load(best_model_file)
+
+    steps = train_generator.samples // train_generator.batch_size + (train_generator.samples % train_generator.batch_size > 0)
+    # evaluation=im_cls2.evaluate(train_generator,steps)
+    pred = im_cls2.predict(train_generator, steps)
+
+    df = pd.DataFrame(pred, columns=['probs_kermit', 'probs_no_kermit'])
+    df['true'] = train_generator.labels
+    df['pred'] = df['probs_kermit'].apply(lambda x: 0 if x >= 0.5 else 1)
+
+    df.to_csv('data/image_predictions_labelled_train.csv', index=False)
     return df
     

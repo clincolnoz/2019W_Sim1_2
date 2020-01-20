@@ -59,14 +59,14 @@ class TFHub:
             self.tf_url, trainable=self.trainable, **self.optional_hub_layer_kwargs
         )
 
-        self.model = tf.keras.Sequential([tf.keras.Input(shape=[224, 224, 3]),
-                                        hub_layer])
+        self.model = tf.keras.Sequential(
+            [tf.keras.Input(shape=[224, 224, 3]), hub_layer]
+        )
         # self.model.add(self.keras_layers)
         # self.model.add(tf.keras.layers.Dropout(rate=0.2))
         self.model.add(
             tf.keras.layers.Dense(
-                self.train_generator.num_classes,
-                activation="softmax",
+                self.train_generator.num_classes, activation="softmax",
             )
         )
         # self.model.build([None, 224, 224, 3])  # Batch input shape.
@@ -96,7 +96,11 @@ class TFHub:
         self.model.compile(
             optimizer=tf.keras.optimizers.Adam(),
             loss=tf.keras.losses.BinaryCrossentropy(),
-            metrics=['accuracy',tf.keras.metrics.Precision(),tf.keras.metrics.Recall()]
+            metrics=[
+                "accuracy",
+                tf.keras.metrics.Precision(),
+                tf.keras.metrics.Recall(),
+            ],
         )
 
         # class CollectBatchStats(tf.keras.callbacks.Callback):
@@ -110,7 +114,7 @@ class TFHub:
         #         self.batch_precision.append(logs[tf.keras.metrics.Precision().result()])
         #         self.batch_recall.append(logs[tf.keras.metrics.Recall().result()])
         #         self.model.reset_metrics()
-        
+
         # batch_stats_callback = CollectBatchStats()
 
         # logdir = "logs/scalars/" + datetime.now().strftime("%Y%m%d-%H%M%S")
@@ -123,8 +127,8 @@ class TFHub:
         #         os.mkdir(parent)
         #     os.mkdir(logdir)
         # tensorboard_callback = keras.callbacks.TensorBoard(log_dir=logdir)
-        
-        path='{}{}/bestmodel'.format(self.model_path,self.model_name)
+
+        path = "{}{}/bestmodel".format(self.model_path, self.model_name)
         if not os.path.exists(path):
             parent = os.path.split(path)[0]
             if not os.path.exists(parent):
@@ -133,22 +137,23 @@ class TFHub:
                     os.mkdir(parent2)
                 os.mkdir(parent)
             os.mkdir(path)
-        
-        path = path + '/' + self.model_name 
-        
+
+        path = path + "/" + self.model_name
+
         callbacks = [
             keras.callbacks.ModelCheckpoint(
-                filepath=path + '_{epoch}.h5',
+                filepath=path + "_{epoch}.h5",
                 # Path where to save the model
                 # The two parameters below mean that we will overwrite
                 # the current checkpoint if and only if
                 # the `val_loss` score has improved.
                 save_best_only=True,
-                monitor='val_loss',
-                verbose=1),
+                monitor="val_loss",
+                verbose=1,
+            ),
             # batch_stats_callback
             # tensorboard_callback,
-        ]   
+        ]
 
         steps_per_epoch = (
             self.train_generator.samples // self.train_generator.batch_size
@@ -163,7 +168,7 @@ class TFHub:
             steps_per_epoch=steps_per_epoch,
             validation_data=self.development_generator,
             validation_steps=validation_steps,
-            callbacks = callbacks,
+            callbacks=callbacks,
         ).history
         return hist
 
@@ -176,7 +181,7 @@ class TFHub:
         Returns:
             yhat: numerical matrix containing the predicted responses.
         """
-        return self.model.predict(x,steps=steps)
+        return self.model.predict(x, steps=steps)
 
     def evaluate(self, xy_gen, steps, **kwargs):
         """Model predict and evluate.
@@ -186,8 +191,8 @@ class TFHub:
         Returns:
             metrics: to be defined!
         """
-        
-        evaluation = self.model.evaluate(xy_gen,steps=steps)
+
+        evaluation = self.model.evaluate(xy_gen, steps=steps)
         return evaluation
 
     def save(self, name, version):
@@ -199,8 +204,7 @@ class TFHub:
             version (str): version of the model to use for saving
         """
         self.model.save(
-            filepath,
-            include_optimizer=True,
+            filepath, include_optimizer=True,
         )
 
     def load(self, filepath):
@@ -212,11 +216,9 @@ class TFHub:
             version (str): version of the model to load
         """
         self.model = tf.keras.models.load_model(
-            filepath, 
-            compile=True,
-            custom_objects={'KerasLayer':hub.KerasLayer},
+            filepath, compile=True, custom_objects={"KerasLayer": hub.KerasLayer},
         )
-        for i,layer in enumerate(self.model.layers):
-            if layer.name == 'keras_layer':
-                self.model.layers[i].trainable=self.trainable
+        for i, layer in enumerate(self.model.layers):
+            if layer.name == "keras_layer":
+                self.model.layers[i].trainable = self.trainable
         # self.model.build([None, 224, 224, 3])  # Batch input shape.

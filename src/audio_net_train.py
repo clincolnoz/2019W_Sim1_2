@@ -47,7 +47,7 @@ df = pd.DataFrame(pred, columns = ['probs_kermit','probs_no_kermit'])
 df['true'] = true
 df['pred'] = df['probs_kermit'].apply(lambda x: 0 if x>=0.5 else 1)
 
-df.to_csv('data/audio_predictions_labelled.csv',index=False)
+df.to_csv('data/audio_predictions_labelled_test.csv',index=False)
 
 print(confusion_matrix(df['true'], df['pred']))
 
