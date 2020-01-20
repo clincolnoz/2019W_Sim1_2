@@ -64,6 +64,7 @@ pip install -r requirements.txt
 | 19/01/2020    | 22:30-23:30       | Train model                                                           | Craig                 |
 | 19/01/2020    | 20:00-22:00       | GPU Tensorflow environment setup                                      | Gent                  |
 | 20/01/2020    | 11:00-24:00       | Model re-training, last changes and write report.                     | Gent                  |
+| 20/01/2020    | 09:00-24:00       | Model training, messing with audio clf, checking report               | Craig                 |
 
 ## Infos on architecture, features, classifier, etc. - whatever you consider important/helpful
 
