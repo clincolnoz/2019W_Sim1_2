@@ -21,7 +21,7 @@ pip install -r requirements.txt
 To have everything running execute the commands below inside of the root of the project:
 
 ```bash
-python src\\extract_video.py.py
+python src\\extract_video.py
 python src\\extractAudioFeatures.py
 python src\\label_data.py
 python src\\train_test_split.py
